@@ -132,7 +132,10 @@ If you use sample kickstart config file, you do not need this paragraph.
 If you want to modify a setting of installing OS or add new OS / new kickstart config file, you can make your kickstart config file and put it to a apropriate path and modify a PXE menu file.
 
 After makeing / modifing your kickstart config file, please use this script in order to add the file to a apropriate path and PXE menu.
-```./bin/add_kickstart.sh```
+
+```
+./bin/add_kickstart.sh
+```
 
  
 ## Setting your DHCP.
