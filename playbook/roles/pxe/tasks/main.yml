@@ -1,0 +1,142 @@
+---
+
+#--------------------------------------------------------
+#
+# TFTPD
+#
+#--------------------------------------------------------
+- name: TFTPD - mkdir
+  file:
+    name: /tftpboot
+    state: directory
+
+#
+# You install tftp-server by .rpm file when no using repository.
+#
+- name: TFTPD - copy rpm
+  copy: src=tftp-server-0.49-7.el6.x86_64.rpm dest=/tmp
+- name: TFTPD - install
+  yum:
+    name: /tmp/tftp-server-0.49-7.el6.x86_64.rpm
+    state: present
+    disablerepo: base,updates,extras
+
+#- name: TFTPD - install
+#  yum:
+#    name: tftp-server
+#    state: present
+#    disablerepo: base,updates,extras
+
+- name: TFTPD - enabled
+  lineinfile:
+    dest: /etc/xinetd.d/tftp
+    regexp: '(disable\s*=\s*)yes'
+    line: '\1no'
+    backrefs: yes
+    backup: yes
+  ignore_errors: True
+
+- name: TFTPD - specify directory
+  lineinfile:
+    dest: /etc/xinetd.d/tftp
+    regexp: '(server_args\s*=\s*)'
+    line: '\1-s /tftpboot'
+    backrefs: yes
+    backup: yes
+  ignore_errors: True
+
+- name: TFTPD - xinetd restart
+  service:
+    name: xinetd
+    state: restarted
+
+- name: TFTPD - mkdir
+  file:
+    name: /tftpboot/kickstart
+    state: directory
+
+#--------------------------------------------------------
+#
+# HTTPD
+#
+#--------------------------------------------------------
+- name: httpd - start
+  service:
+    name: httpd
+    state: started
+
+- name: httpd - mkdir
+  file:
+    name: /var/www/html/kickstart
+    state: directory
+
+- name: httpd - mount /var/www/html/kickstart <-- /tftpboot/kickstart
+  mount:
+    name: /tftpboot/kickstart
+    src: /var/www/html/kickstart
+    fstype: none
+    state: mounted
+    opts: ro,bind
+
+#--------------------------------------------------------
+#
+# PXE
+#
+#--------------------------------------------------------
+- name: PXE - Copy files
+  copy:
+    src: /usr/share/syslinux/{{ item }}
+    dest: /tftpboot/
+    remote_src: True
+  with_items:
+    - pxelinux.0
+    - vesamenu.c32
+    - reboot.c32
+    - poweroff.com
+
+- name: PXE - mkdir pxelinux.cfg
+  file:
+    name: /tftpboot/pxelinux.cfg/
+    state: directory
+
+- name: PXE - Menu file
+  template:
+    src: default.j2
+    dest: /tftpboot/pxelinux.cfg/default
+    backup: yes
+
+- name: Setup CentOS6.5 - mkdir 
+  file:
+    name: /var/www/html/kickstart/CentOS_6.5/iso
+    state: directory
+  ignore_errors: True
+
+- name: Setup CentOS_6.5 - added-ks.cfg
+  template:
+    src: CentOS_6.5/added-ks.cfg.j2
+    dest: /var/www/html/kickstart/CentOS_6.5/added-ks.cfg
+    backup: yes
+
+- name: Setup CentOS_6.5 - partition-ks.cfg
+  template:
+    src: CentOS_6.5/partition-ks.cfg.j2
+    dest: /var/www/html/kickstart/CentOS_6.5/partition-ks.cfg
+    backup: yes
+
+- name: Setup CentOS7.2 - mkdir
+  file:
+    name: /var/www/html/kickstart/CentOS_7.2/iso
+    state: directory
+  ignore_errors: True
+
+- name: Setup CentOS_7.2 - added-ks.cfg
+  template:
+    src: CentOS_7.2/added-ks.cfg.j2
+    dest: /var/www/html/kickstart/CentOS_7.2/added-ks.cfg
+    backup: yes
+
+- name: Setup CentOS_7.2 - partition-ks.cfg
+  template:
+    src: CentOS_7.2/partition-ks.cfg.j2
+    dest: /var/www/html/kickstart/CentOS_7.2/partition-ks.cfg
+    backup: yes

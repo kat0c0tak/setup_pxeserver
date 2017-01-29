@@ -1,0 +1,40 @@
+default vesamenu.c32
+prompt 0
+timeout 500
+
+menu title PXE Boot Menu
+
+label Local Machine
+menu label Local Machine
+localboot 0
+
+label Poweroff
+kernel poweroff.com
+
+label reboot
+kernel reboot.c32
+
+label CentOS 6.5 Install (Manual)
+kernel kickstart/CentOS_6.5/iso/images/pxeboot/vmlinuz
+append load initrd=kickstart/CentOS_6.5/iso/images/pxeboot/initrd.img inst.repo=http://{{ HTTP_SERVER_IP }}/kickstart/CentOS_6.5/iso
+
+label CentOS 6.5 Install (added-ks.cfg)
+kernel kickstart/CentOS_6.5/iso/images/pxeboot/vmlinuz
+append load devfs=nomount ks=http://{{ HTTP_SERVER_IP }}/kickstart/CentOS_6.5/added-ks.cfg initrd=kickstart/CentOS_6.5/iso/images/pxeboot/initrd.img
+
+label CentOS 6.5 Install (partition-ks.cfg)
+kernel kickstart/CentOS_6.5/iso/images/pxeboot/vmlinuz
+append load devfs=nomount ks=http://{{ HTTP_SERVER_IP }}/kickstart/CentOS_6.5/partition-ks.cfg initrd=kickstart/CentOS_6.5/iso/images/pxeboot/initrd.img
+
+label CentOS 7.2 Install (Manual)
+kernel kickstart/CentOS_7.2/iso/images/pxeboot/vmlinuz
+append load initrd=kickstart/CentOS_7.2/iso/images/pxeboot/initrd.img inst.repo=http://{{ HTTP_SERVER_IP }}/kickstart/CentOS_7.2/iso
+
+label CentOS 7.2 Install (added-ks.cfg)
+kernel kickstart/CentOS_7.2/iso/images/pxeboot/vmlinuz
+append load devfs=nomount ks=http://{{ HTTP_SERVER_IP }}/kickstart/CentOS_7.2/added-ks.cfg initrd=kickstart/CentOS_7.2/iso/images/pxeboot/initrd.img
+
+label CentOS 7.2 Install (partition-ks.cfg)
+kernel kickstart/CentOS_7.2/iso/images/pxeboot/vmlinuz
+append load devfs=nomount ks=http://{{ HTTP_SERVER_IP }}/kickstart/CentOS_7.2/partition-ks.cfg initrd=kickstart/CentOS_7.2/iso/images/pxeboot/initrd.img
+

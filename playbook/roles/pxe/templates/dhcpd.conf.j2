@@ -1,0 +1,9 @@
+subnet {{NETWORK_IP}} netmask {{SUBNETMASK}} {
+  range {{IP_RANGE_START}} {{IP_RANGE_END}};
+  option subnet-mask {{SUBNETMASK}};
+  option routers {{ROUTER_IP}};
+
+  # For PXE boot.
+  filename "/pxelinux.0";
+  next-server {{TFTP_IP}};
+}

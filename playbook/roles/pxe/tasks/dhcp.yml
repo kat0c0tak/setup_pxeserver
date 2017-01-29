@@ -1,0 +1,15 @@
+---
+
+#--------------------------------------------------------
+# DHCPD
+#--------------------------------------------------------
+- name: DHCPD - dhcpd.conf
+  template:
+    src: 'dhcpd.conf.j2'
+    dest: /etc/dhcp/dhcpd.conf
+    backup: yes
+
+- name: DHCPD - service start
+  service:
+    name: dhcpd
+    state: started
